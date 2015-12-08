@@ -1,0 +1,7 @@
+Coherence,Correct Direction 1,Perceived Direction 1,Correct Direction 2,Perceived Direction 2,Correct Direction 3,Perceived Direction 3
+0.01,1,1,1,-1,-1,-1
+0.05,-1,-1,1,1,1,-1
+0.1,-1,-1,1,1,-1,-1
+0.15,-1,1,-1,-1,1,-1
+0.2,-1,-1,-1,-1,-1,-1
+0.25,1,1,-1,-1,-1,1
