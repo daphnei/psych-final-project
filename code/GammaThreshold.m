@@ -27,7 +27,7 @@ params.spacing = 300;                    % How much spacing to put between the t
 params.bgRGB = [0,0,0];                 % The background color.
 
 % Experimental parameters.
-params.nBlocks = 10;                    % Number of blocks
+params.nBlocks = 1;                    % Number of blocks
 params.trialDuration = 1.0;				% Trial duration (seconds)
 params.initialAdaptTime = 1;			% Time for initial adaptation (seconds)
 params.topupAdaptTime = 0.3;			% Top-up adapt time. (seconds)

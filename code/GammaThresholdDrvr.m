@@ -28,8 +28,8 @@ nGammas = size(params.gammas, 2);
 nTests = nImages * nGammas;	% Number of test in each block of the experiment. There is one test for each possible gamma/image combination.
 
 % Setup the response data.  This will store all the responses.
-responseData = zeros(nTests, params.nBlocks+3);
-startingColumn = 3; %The first two columns describe the setup of the trial.
+responseData = zeros(nTests, params.nBlocks);
+startingColumn = 1;
 
 % Get the keyboard listener ready.
 mglGetKeyEvent;
@@ -140,18 +140,17 @@ try
                 % Turn off the feedback text.
                 win.disableObject(textTag);
             end
-        end
         
-        % Store the response.
-        % Store 1 if the response is -1 and the unmodified image is on the left
-        % Store 1 if the response is 1 and the unmodified image is on the right
-        % Store -1 if the response is not the direction of the unmodified image
-        if (response == testDirection)
-            responseData(index, startingColumn) = 1;
-        else
-            responseData(index, startingColumn) = -1;
+            % Store the response.
+            % Store 1 if the response is -1 and the unmodified image is on the left
+            % Store 1 if the response is 1 and the unmodified image is on the right
+            % Store -1 if the response is not the direction of the unmodified image
+            if (response == testDirection)
+                responseData(index, startingColumn) = 1;
+            else
+                responseData(index, startingColumn) = -1;
+            end
         end
-        
         startingColumn = startingColumn + 1;
 	end
 	
@@ -169,22 +168,19 @@ try
 	
 	% Stick the data into a CSV file in the data folder..
 	c = CSVFile(dataFile, true);
-	c = c.addColumn('Coherence', 'g');
-	c = c.setColumnData('Coherence', params.test.dotCoherence');
+	c = c.addColumn('Image', 'g');
+	c = c.setColumnData('Image', imagePaths.name);
+    
+    c = c.addColumn('Gamma', 'g');
+	c = c.setColumnData('Gamma', params.gammas');
     
     i = 1;
-    trial = 1;
-	while i < params.nBlocks * 2;
-		cName = sprintf('Correct Direction %d', trial);
+	while i < params.nBlocks;
+		cName = sprintf('Choice %d', i);
 		c = c.addColumn(cName, 'd');
 		c = c.setColumnData(cName, responseData(:,i));
         
-        cName = sprintf('Perceived Direction %d', trial);
-		c = c.addColumn(cName, 'd');
-		c = c.setColumnData(cName, responseData(:,i+1));
-        
         i = i + 2;
-        trial = trial + 1;
 	end
 	c.write;
 	
