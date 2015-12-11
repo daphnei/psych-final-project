@@ -29,7 +29,6 @@ nTests = nImages * nGammas;	% Number of test in each block of the experiment. Th
 
 % Setup the response data.  This will store all the responses.
 responseData = zeros(nTests, params.nBlocks+3);
-startingColumn = 3; %The first two columns describe the setup of the trial.
 
 % Get the keyboard listener ready.
 mglGetKeyEvent;
@@ -78,81 +77,118 @@ try
             theImage = images{imageIndex};
             theGammaAdjustedImage = theImage;
             
-            % TODO: Perform some modification on theGammaAdjustedImage to
-            % actually do the gamma adjusting.
-            
 			% Set some parameters for the test patch for this trial.
 			win.BackgroundColor = params.bgRGB;
             
-            % randomly decide whether to present the gamma-adjusted on the
+            % randomly decide whether to present the gamma-adjusted i on the
             % left or on the right.
             if rand() > 0.5
-                testDirection = -1;
+                testDirection = 1;
                 theImagePosition = [-params.spacing, 0];
                 theGammaAdjustedImagePosition = [params.spacing, 0];
             else
-                testDirection = 1;
+                testDirection = -1;
                 theImagePosition = [-params.spacing, 0];
                 theGammaAdjustedImagePosition = [params.spacing, 0];
             end
             
             % Create objects for the unmodified image and the
             % Gamma-adjusted image.
-            win.addImage(theImagePosition, [size(theImage, 1), size(theImage, 2)], ...
-                theImage, 'Name', 'theImage');
-            win.addImage(theGammaAdjustedImagePosition, [size(theGammaAdjustedImage, 1), size(theImage, 2)], ...
-                theGammaAdjustedImage, 'Name', 'theGammaAdjustedImage');
+            win.addImage([0, 0], [size(theImage, 1), size(theImage, 2)], theImage, 'Name', 'theImage');
+            win.addImage([0, 0], [size(theImage, 1), size(theImage, 2)], theImage, 'Name', 'theImage');
 
             win.enableObject('theImage');
-            win.enableObject('theGammaAdjustedImage');
             
             win.draw();
+            
+            if (testDirection == -1)
+
+            else
+   
+            end
+            
             
 			% Show the test dots.
 			response = WaitForResponse(win, params, params.trialDuration);
 
             win.disableObject('theImage');
             win.deleteObject('theImage');
+            
+			% Top-up adaptation.  Adaption dots are show a minimum
+			% amount of time and proceed forever until a response is given.
+			win.BackgroundColor = params.adapt.bgRGB;
+			[adaptPatch, response] = MoveTheDots(win, params, 'adaptPatch', adaptPatch, ...
+				params.topupAdaptTime, true);
 			
-            win.disableObject('theGammaAdjustedImage');
-            win.deleteObject('theGammaAdjustedImage');
-
-            % The following is the code that tells the user if they are
-            % right or wrong. I am not sure if we want to continue doing
-            % this or not.
-            if params.enableFeedback
-                % Trials where both values are of the same polarity implies
-                % correct trials.  But, need to special case when coherence
+			% Show the feedback if enabled.
+            %
+            % Feedback parameter of 1 means give feedback on direction
+			if params.enableFeedback == 1
+				% Stick our trial coherence and the response in an array.
+				m = [params.test.dotCoherence(index), response];
+				
+				% Trials where both values are of the same polarity implies
+				% correct trials.  But, need to special case when coherence
                 % is 0, since there is no right answer for such trials.  We
                 % say correct with probability 0.5 on trials where coherence
                 % is 0.
-                if response == testDirection
+                if (params.test.dotCoherence(index) == 0)
+                    if (CoinFlip(1,0.5))
+                        textTag = 'correctText';
+                    else
+                        textTag = 'incorrectText';
+                    end
+                else
+                    if all(m < 0) || all(m > 0)
+                        textTag = 'correctText';
+                    else
+                        textTag = 'incorrectText';
+                    end
+                end
+				
+				% Enable the appropriate feedback text.
+				win.enableObject(textTag);
+				
+				% Move the adapation dots for the feedback duration.
+				adaptPatch = MoveTheDots(win, params, 'adaptPatch', adaptPatch, ...
+					params.feedbackDuration);
+				
+				% Turn off the feedback text.
+				win.disableObject(textTag);
+            
+            % Feedback parameter of 2 measn give feedback on absence/presence
+            % of motion
+            elseif params.enableFeedback == 2
+                if (testDirection == response)
                     textTag = 'correctText';
                 else
                     textTag = 'incorrectText';
                 end
-
+                
                 % Enable the appropriate feedback text.
-                win.enableObject(textTag);
-                
-                GetChar;
-                
-                % Turn off the feedback text.
-                win.disableObject(textTag);
+				win.enableObject(textTag);
+				
+				% Move the adapation dots for the feedback duration.
+				adaptPatch = MoveTheDots(win, params, 'adaptPatch', adaptPatch, ...
+					params.feedbackDuration);
+				
+				% Turn off the feedback text.
+				win.disableObject(textTag);      
             end
+			
+			% Now do the iti.
+			if params.iti > 0
+				adaptPatch = MoveTheDots(win, params, 'adaptPatch', adaptPatch, params.iti);
+            end
+				
+			% Store the response.
+            %fprintf('correct dir = %d, guessed dir = %d\n', testDirection, response);
+			responseData(index, startingColumn) = testDirection;
+            responseData(index, startingColumn+1) = response;
+            %responseData
         end
         
-        % Store the response.
-        % Store 1 if the response is -1 and the unmodified image is on the left
-        % Store 1 if the response is 1 and the unmodified image is on the right
-        % Store -1 if the response is not the direction of the unmodified image
-        if (response == testDirection)
-            responseData(index, startingColumn) = 1;
-        else
-            responseData(index, startingColumn) = -1;
-        end
-        
-        startingColumn = startingColumn + 1;
+        startingColumn = startingColumn + 2;
 	end
 	
 	% Close everything down.

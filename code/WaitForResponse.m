@@ -1,4 +1,4 @@
-function [dotPatch, response] = MoveTheDots(win, params, patchName, dotPatch, duration, getResponse)
+function [response] = WaitForResponse(win, params, duration, getResponse)
 % MoveTheDots - Basic dot mover.
 %
 % Syntax:
@@ -24,15 +24,11 @@ function [dotPatch, response] = MoveTheDots(win, params, patchName, dotPatch, du
 % Output:
 % dotPatch (DotPatch) - The updated dot patch.
 
-error(nargchk(5, 6, nargin));
+error(nargchk(3, 4, nargin));
 
-if nargin == 5
-	getResponse = false;
+if nargin == 3
+	getResponse = true;
 end
-
-% Get the monitor refresh rate.  We'll use this parameter for our
-% animation.
-frameRate = win.DisplayInfo(win.WindowID).refreshRate;
 
 % Reset the keyboard queue.
 mglGetKeyEvent;
@@ -58,15 +54,6 @@ while keepLooping
 				error('abort');
 		end
 	end
-	
-	% Update the dot patch data.
-	dotPatch = dotPatch.move(1/frameRate);
-	
-	% Update the dot positions in GLWindow.
-	win.setObjectProperty(patchName, 'DotPositions', dotPatch.Dots);
-	
-	% Render the dots.
-	win.draw;
 	
 	if getResponse
 		% Don't allow the loop to quit until we've reached the minimum

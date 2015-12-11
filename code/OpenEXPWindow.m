@@ -23,14 +23,13 @@ win = GLWindow('SceneDimensions', screenDims);
 win.open;
 win.draw;
 
-% TODO(daphne): Maybe we need these additional texts maybe we don't.
-% Commenting them out for now.
-% Add the feedback text.  Place it just over the top of the adapation
-% patch.
-% win.addText('Correct', 'Name', 'correctText', 'Center', [0 params.adapt.rectSize(2)/2+100], ...
-% 	'FontSize', 80, 'Color', [0 1 0]);
-% win.addText('Incorrect', 'Name', 'incorrectText', 'Center', [0 params.adapt.rectSize(2)/2+100], ...
-% 	'FontSize', 80, 'Color', [1 0 0]);
+% Add the feedback text.
+% TODO(daphne): Might want to modify these and just give a single feedback
+% (no conceoption of right or wrong).
+win.addText('Correct', 'Name', 'correctText', 'Center', [0 100], ...
+	'FontSize', 80, 'Color', [0 1 0]);
+win.addText('Incorrect', 'Name', 'incorrectText', 'Center', [0 100], ...
+	'FontSize', 80, 'Color', [1 0 0]);
 
 % Add the start text
 win.addText('Hit Any Key To Start', 'Name', 'startText', 'Center', [0 0], ...

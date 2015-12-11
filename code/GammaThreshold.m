@@ -19,22 +19,22 @@ function GammaThreshold(subjectName)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Test parameteters.  These determine the properties of the test stimuli.
-params.imageDir = 'exp_images';             % The location of the photos
-params.gammas = [0.5, 0.7];
+params.imageDir = 'exp_images';         % The location of the photos
+params.gammas = [0.5, 0.7];             % The different gamma values to test out.
+params.imageScale = 0.2;                % Use this for giant images to scale them down.
 
-params.spacing = 50;                    % How much spacing to put between the two images.
-params.bgRGB = [0,0,0];
+params.spacing = 300;                    % How much spacing to put between the two images.
+params.bgRGB = [0,0,0];                 % The background color.
 
 % Experimental parameters.
 params.nBlocks = 10;                    % Number of blocks
 params.trialDuration = 1.0;				% Trial duration (seconds)
 params.initialAdaptTime = 1;			% Time for initial adaptation (seconds)
 params.topupAdaptTime = 0.3;			% Top-up adapt time. (seconds)
-params.enableFeedback = 2;				% Enable/disable trial feedback
+params.enableFeedback = 1;				% Enable/disable trial feedback
                                         %   0 -> no feedback
-                                        %   1 -> feedback on direction
-                                        %   2 -> feedback on motion vs non-motion
-params.feedbackDuration = 0.3;			% Duration of feedback (seconds)
+                                        %   1 -> feedback
+params.feedbackDuration = 10;			% Duration of feedback (seconds)
 params.iti = 0.5;						% Inter-trial interval (seconds)
 
 % Fixation point
