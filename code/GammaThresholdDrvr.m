@@ -2,12 +2,18 @@ function GammaThresholdDrvr(params)
 % DotThresholdDrvr - Driver program for motion aftereffect experiment.
 %
 % Syntax:
-% DotThresholdDrvr(params)
+% GammaThresholdDrvr(params)
 
 error(nargchk(1, 1, nargin));
 
 % Read in the list of images.
 imagePaths = rdir(params.imageDir);
+
+% Read the contents of each image into memory now, so that we don't slow
+% down the experiment later.
+for i = 1:size(imagePaths, 1)
+    images{i} = imread(imagePaths(i).name)/255;
+end
 
 % Make sure we have a positive number of gammas.
 if size(params.gammas, 2) <= 0
@@ -27,7 +33,7 @@ mglGetKeyEvent;
 
 % Open the experimental window and (read all of the images into memory
 % maybe?)
-[win, adaptPatch, testPatch] = OpenEXPWindow(params);
+win = OpenEXPWindow(params);
 if (params.fpSize > 0)
     win.enableObject('fp');
 end
@@ -35,9 +41,8 @@ end
 % Eat up keyboard input.
 ListenChar(2);
 
-spacing = params.test.rectSize(1);
-centerLeft = [-spacing 0];
-centerRight = [spacing 0];
+centerLeft = [-params.spacing 0];
+centerRight = [params.spacing 0];
 
 try	
 	% Clear out any previous keypresses.
@@ -65,24 +70,29 @@ try
 			gammaIndex = mod(index, nGammas) + 1;
             imageIndex = mod(index, nImages) + 1;
             
+            theImage = images{imageIndex};
+            theGammaAdjustedImage = theImage;
+            
 			% Set some parameters for the test patch for this trial.
-			win.BackgroundColor = params.test.bgRGB;
-
-            % TODO(daphne): replace everything below this with stuff to
-            % render the two images. THIS IS WHERE I STOPPED
+			win.BackgroundColor = params.bgRGB;
+            
+            % determines whether the gamma-adjusted image will be on the
+            % left or on the right.
             if rand() > 0.5
                 testDirection = 1;
             else
                 testDirection = -1;
             end
             
+            win.addImage([0, 0], [size(theImage, 1), size(theImage, 2)], theImage, 'Name', 'theImage');
+            win.enableObject('theImage');
+            
             if (testDirection == -1)
-                testPatch.Center = centerLeft;
-                adaptPatch.Center = centerRight;
+
             else
-                testPatch.Center = centerRight;
-                adaptPatch.Center = centerLeft;    
+   
             end
+            
             
 			% Show the test dots.
 			win.enableObject('testPatch');

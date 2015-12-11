@@ -22,6 +22,9 @@ function GammaThreshold(subjectName)
 params.imageDir = 'exp_images';             % The location of the photos
 params.gammas = [0.5, 0.7];
 
+params.spacing = 50;                    % How much spacing to put between the two images.
+params.bgRGB = [0,0,0];
+
 % Experimental parameters.
 params.nBlocks = 10;                    % Number of blocks
 params.trialDuration = 1.0;				% Trial duration (seconds)
