@@ -75,6 +75,10 @@ try
             theImage = images{imageIndex};
             theGammaAdjustedImage = theImage;
             
+            imageWidth = size(theImage, 2);
+            imageHeight = size(theImage, 1);
+            spacing = (imageWidth + params.spacing) / 2;
+            
             % TODO: Perform some modification on theGammaAdjustedImage to
             % actually do the gamma adjusting.
             
@@ -85,19 +89,19 @@ try
             % left or on the right.
             if rand() > 0.5
                 testDirection = -1;
-                theImagePosition = [-params.spacing, 0];
-                theGammaAdjustedImagePosition = [params.spacing, 0];
+                theImagePosition = [-spacing, 0];
+                theGammaAdjustedImagePosition = [spacing, 0];
             else
                 testDirection = 1;
-                theImagePosition = [-params.spacing, 0];
-                theGammaAdjustedImagePosition = [params.spacing, 0];
+                theImagePosition = [-spacing, 0];
+                theGammaAdjustedImagePosition = [spacing, 0];
             end
             
             % Create objects for the unmodified image and the
             % Gamma-adjusted image.
-            win.addImage(theImagePosition, [size(theImage, 1), size(theImage, 2)], ...
+            win.addImage(theImagePosition, [imageWidth, imageHeight], ...
                 theImage, 'Name', 'theImage');
-            win.addImage(theGammaAdjustedImagePosition, [size(theGammaAdjustedImage, 1), size(theImage, 2)], ...
+            win.addImage(theGammaAdjustedImagePosition, [imageWidth, imageHeight], ...
                 theGammaAdjustedImage, 'Name', 'theGammaAdjustedImage');
 
             win.enableObject('theImage');

@@ -22,8 +22,9 @@ function GammaThreshold(subjectName)
 params.imageDir = 'exp_images';         % The location of the photos
 params.gammas = [0.5, 0.7];             % The different gamma values to test out.
 params.imageScale = 0.2;                % Use this for giant images to scale them down.
+addpath(params.imageDir);
 
-params.spacing = 300;                    % How much spacing to put between the two images.
+params.spacing = 100;                    % How much spacing to put between the two images.
 params.bgRGB = [0,0,0];                 % The background color.
 
 % Experimental parameters.
