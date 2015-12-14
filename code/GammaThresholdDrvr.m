@@ -25,7 +25,7 @@ end
 % Convenience parameters
 nImages = size(imagePaths, 1);
 nGammas = size(params.gammas, 2);
-nTests = nImages * nGammas;	% Number of test in each block of the experiment. There is one test for each possible gamma/image combination.
+nTests = nImages * nGammas;	% Number of tests in each block of the experiment. There is one test for each possible gamma/image combination.
 
 % Setup the response data.  This will store all the responses.
 responseData = zeros(nTests, params.nBlocks);
@@ -113,7 +113,10 @@ try
 			
             win.disableObject('theGammaAdjustedImage');
             win.deleteObject('theGammaAdjustedImage');
-
+            
+            % Redraw the screen to remove the stimulus images.
+            win.draw();
+            
             % The following is the code that tells the user if they are
             % right or wrong. I am not sure if we want to continue doing
             % this or not.
@@ -159,7 +162,7 @@ try
 	win.close;
 	
 	% Figure out some data saving parameters.
-	dataFolder = sprintf('%s/data/%s/%s/%s', fileparts(fileparts(which('DotThreshold'))), ...
+	dataFolder = sprintf('%s/data/%s/%s/%s', fileparts(fileparts(which('GammaThreshold'))), ...
 		params.experimenter, params.experimentName, params.subject);
 	if ~exist(dataFolder, 'dir')
 		mkdir(dataFolder);
@@ -169,7 +172,7 @@ try
 	% Stick the data into a CSV file in the data folder..
 	c = CSVFile(dataFile, true);
 	c = c.addColumn('Image', 'g');
-	c = c.setColumnData('Image', imagePaths.name);
+	c = c.setColumnData('Image', {imagePaths.name});
     
     c = c.addColumn('Gamma', 'g');
 	c = c.setColumnData('Gamma', params.gammas');

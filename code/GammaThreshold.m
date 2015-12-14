@@ -45,9 +45,9 @@ params.fpColor = [0 1 0];               % Fixation point RGB
 params.leftKey = {'d' '1'};             % Keys accepted for left/up/absent response
 params.rightKey = {'k' '2'};            % Keys accepted for right/down/present response
 
-params.experimenter = 'TAFC';          % Experimenter
+params.experimenter = 'test';          % Experimenter
 params.subject = subjectName;           % Name of the subject.
-params.experimentName = sprintf('GammeThreshold'); % Root name of the experiment and data file.
+params.experimentName = sprintf('GammaThreshold'); % Root name of the experiment and data file.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Call the driver.
