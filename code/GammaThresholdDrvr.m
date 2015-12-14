@@ -93,22 +93,24 @@ try
             % randomly decide whether to present the gamma-adjusted on the
             % left or on the right.
             if rand() > 0.5
-                testDirection = -1;
-                theImagePosition = [-spacing, 0];
-                theGammaAdjustedImagePosition = [spacing, 0];
-            else
                 testDirection = 1;
+                theImagePosition = [spacing, 0];
+                theGammaAdjustedImagePosition = [-spacing, 0];
+            else
+                testDirection = -1;
                 theImagePosition = [-spacing, 0];
                 theGammaAdjustedImagePosition = [spacing, 0];
             end
             
             % Create objects for the unmodified image and the
             % Gamma-adjusted image.
+            tic
             win.addImage(theImagePosition, [imageWidth, imageHeight], ...
                 theImage, 'Name', 'theImage');
             win.addImage(theGammaAdjustedImagePosition, [imageWidth, imageHeight], ...
                 theGammaAdjustedImage, 'Name', 'theGammaAdjustedImage');
-
+            toc
+            
             win.enableObject('theImage');
             win.enableObject('theGammaAdjustedImage');
             
@@ -135,7 +137,7 @@ try
                 % is 0, since there is no right answer for such trials.  We
                 % say correct with probability 0.5 on trials where coherence
                 % is 0.
-                if response ~= testDirection
+                if response == testDirection
                     textTag = 'correctText';
                 else
                     textTag = 'incorrectText';
