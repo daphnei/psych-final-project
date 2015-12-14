@@ -73,19 +73,15 @@ try
             imageIndex = mod(index, nImages) + 1;
             
             theImage = images{imageIndex};
-            gamma = params.gammas(gammaIndex);
+            theGammaAdjustedImage = theImage;
             
-            % TODO: Perform some modification on theGammaAdjustedImage to
-            % actually do the gamma adjusting.
-            hGamma = vision.GammaCorrector(2.2, 'Correction', 'De-gamma');
-            theGammaAdjustedImage = step(hGamma, theImage);
-            
-            hGamma = vision.GammaCorrector(gamma, 'Correction', 'Gamma');
-            theGammaAdjustedImage = step(hGamma, theGammaAdjustedImage);
-                        
             imageWidth = size(theImage, 2);
             imageHeight = size(theImage, 1);
             spacing = (imageWidth + params.spacing) / 2;
+            
+            % TODO: Perform some modification on theGammaAdjustedImage to
+            % actually do the gamma adjusting.
+            theGammaAdjustedImage =  vision.GammaCorrector(3, 
             
 			% Set some parameters for the test patch for this trial.
 			win.BackgroundColor = params.bgRGB;
@@ -135,7 +131,7 @@ try
                 % is 0, since there is no right answer for such trials.  We
                 % say correct with probability 0.5 on trials where coherence
                 % is 0.
-                if response ~= testDirection
+                if response == testDirection
                     textTag = 'correctText';
                 else
                     textTag = 'incorrectText';
