@@ -44,9 +44,6 @@ end
 % Eat up keyboard input.
 ListenChar(2);
 
-centerLeft = [-params.spacing 0];
-centerRight = [params.spacing 0];
-
 try	
 	% Clear out any previous keypresses.
 	FlushEvents;
@@ -134,8 +131,11 @@ try
 
                 % Enable the appropriate feedback text.
                 win.enableObject(textTag);
+                win.draw();
                 
-                GetChar;
+                % Wait for the user to press a button indicating they are
+                % ready to keep going.
+                WaitForResponse(win, params, params.trialDuration);
                 
                 % Turn off the feedback text.
                 win.disableObject(textTag);
