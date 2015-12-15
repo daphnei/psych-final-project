@@ -77,12 +77,17 @@ try
             
             % TODO: Perform some modification on theGammaAdjustedImage to
             % actually do the gamma adjusting.
-            hGamma = vision.GammaCorrector(2.2, 'Correction', 'De-gamma');
-            theGammaAdjustedImage = step(hGamma, theImage);
+            if params.deGamma
+                hGamma = vision.GammaCorrector(2.2, 'Correction', 'De-gamma');
+                theGammaAdjustedImage = step(hGamma, theImage);
+            end
             
             hGamma = vision.GammaCorrector(gamma, 'Correction', 'Gamma');
             theGammaAdjustedImage = step(hGamma, theGammaAdjustedImage);
-                        
+            % Make sure none of the values in the gamma adjusted image are
+            % larger than 1.
+            theGammaAdjustedImage = min(theGammaAdjustedImage, 1);
+
             imageWidth = size(theImage, 2);
             imageHeight = size(theImage, 1);
             spacing = (imageWidth + params.spacing) / 2;
@@ -101,7 +106,7 @@ try
                 theImagePosition = [-spacing, 0];
                 theGammaAdjustedImagePosition = [spacing, 0];
             end
-            
+                        
             % Create objects for the unmodified image and the
             % Gamma-adjusted image.
             tic
