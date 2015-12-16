@@ -4,6 +4,10 @@ function GammaThresholdDrvr(params)
 % Syntax:
 % GammaThresholdDrvr(params)
 
+FAKE = 0;
+CORRECT = 1;
+INCORRECT = 2;
+
 error(nargchk(1, 1, nargin));
 
 % Read in the list of images.
@@ -61,20 +65,23 @@ try
     
     startingColumn = 1;
     
+    
 	% Now run the trials.
 	for i = 1:params.nBlocks
 		trialOrder = Shuffle(1:nTests);
-		
+        trialHistory = [];
+        maxGammaIndex = length(params.gammas);
+        currentGammaIndex = params.startingGammaIndex;
+        
 		for j = 1:nTests
 			% Explicit trial index, as well as the indiices of the 
             % corresponding gamme and image for the trial.
 			index = trialOrder(j);
-			gammaIndex = mod(index, nGammas) + 1;
             imageIndex = mod(index, nImages) + 1;
             
             theImage = images{imageIndex};
-            gamma = params.gammas(gammaIndex);
-            
+            gamma = params.gammas(currentGammaIndex);
+
             % TODO: Perform some modification on theGammaAdjustedImage to
             % actually do the gamma adjusting.
             if params.deGamma
@@ -132,7 +139,18 @@ try
             
             % Redraw the screen to remove the stimulus images.
             win.draw();
-            
+
+            if response == testDirection          
+                trialHistory = horzcat(trialHistory, CORRECT);   
+                historySize = length(trialHistory);
+               if  historySize > 1 && trialHistory(historySize) == CORRECT && trialHistory(historySize - 1) == CORRECT
+                  trialHistory = horzcat(trialHistory, FAKE);
+                  currentGammaIndex = min(currentGammaIndex + 1, maxGammaIndex);
+               end            
+            else
+                trialHistory = horzcat(trialHistory, INCORRECT);
+                currentGammaIndex = max(currentGammaIndex - 1, 1);               
+            end
             % The following is the code that tells the user if they are
             % right or wrong. I am not sure if we want to continue doing
             % this or not.

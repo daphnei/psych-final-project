@@ -21,6 +21,7 @@ function GammaThreshold(subjectName)
 % Test parameteters.  These determine the properties of the test stimuli.
 params.imageDir = 'exp_images';         % The location of the photos
 params.gammas = [1.5 1 2.1 2.2];             % The different gamma values to test out.
+params.startingGammaIndex = 2;
 params.imageScale = 0.2;                % Use this for giant images to scale them down.
 params.deGamma = true;
 
