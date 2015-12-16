@@ -11,7 +11,7 @@ INCORRECT = 2;
 error(nargchk(1, 1, nargin));
 
 % Read in the list of images.
-imagePaths = rdir(params.imageDir);
+imagePaths = rdir(sprintf('%s/**/*.jpg', params.imageDir));
 
 % Read the contents of each image into memory now, so that we don't slow
 % down the experiment later.
@@ -87,6 +87,8 @@ try
             if params.deGamma
                 hGamma = vision.GammaCorrector(2.2, 'Correction', 'De-gamma');
                 theGammaAdjustedImage = step(hGamma, theImage);
+            else
+                theGammaAdjustedImage = theImage;
             end
             
             hGamma = vision.GammaCorrector(gamma, 'Correction', 'Gamma');

@@ -11,7 +11,7 @@ INCORRECT = 2;
 error(nargchk(1, 1, nargin));
 
 % Read in the list of images.
-imagePaths = rdir(params.imageDir);
+imagePaths = rdir(sprintf('%s/**/*.jpg', params.imageDir));
 
 % Read the contents of each image into memory now, so that we don't slow
 % down the experiment later.
@@ -81,8 +81,7 @@ try
             
             theImage = images{imageIndex};
             gamma = params.gammas(currentGammaIndex);
-            currentGammaIndex
-            trialHistory
+
             % TODO: Perform some modification on theGammaAdjustedImage to
             % actually do the gamma adjusting.
             if params.deGamma
@@ -140,20 +139,18 @@ try
             
             % Redraw the screen to remove the stimulus images.
             win.draw();
-        
-            historySize = length(trialHistory);
-            
-            
-            if response == testDirection?
-               if historySize > 1 && trialHistory(historySize) == CORRECT
+
+            if response == testDirection          
+                trialHistory = horzcat(trialHistory, CORRECT);   
+                historySize = length(trialHistory);
+               if  historySize > 1 && trialHistory(historySize) == CORRECT && trialHistory(historySize - 1) == CORRECT
                   trialHistory = horzcat(trialHistory, FAKE);
                   currentGammaIndex = min(currentGammaIndex + 1, maxGammaIndex);
-               end
+               end            
             else
                 trialHistory = horzcat(trialHistory, INCORRECT);
                 currentGammaIndex = max(currentGammaIndex - 1, 1);               
             end
-                
             % The following is the code that tells the user if they are
             % right or wrong. I am not sure if we want to continue doing
             % this or not.
