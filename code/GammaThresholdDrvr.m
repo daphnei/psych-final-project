@@ -15,12 +15,20 @@ imagePaths = rdir(sprintf('%s/**/*.jpg', params.imageDir));
 
 % Read the contents of each image into memory now, so that we don't slow
 % down the experiment later.
-for i = 1:size(imagePaths, 1)
-    image = imread(imagePaths(i).name);
-    image = imresize(image, params.imageScale);
-    images{i} = flipdim(double(image), 1) ./ 255;
+if exist(params.imageSaveFile, 'file') ~= 2
+    tic
+    for i = 1:size(imagePaths, 1)
+        image = imread(imagePaths(i).name);
+        image = imresize(image, params.imageScale);
+        images{i} = flipdim(double(image), 1) ./ 255;
+    end
+    save(params.imageSaveFile, 'images');
+    toc
+else  
+    tic
+    load(params.imageSaveFile);
+    toc
 end
-
 % Make sure we have a positive number of gammas.
 if size(params.gammas, 2) <= 0
 	error('Number of gammas must be >= 0.');

@@ -23,7 +23,9 @@ params.imageDir = 'test_images';         % The location of the photos
 params.gammas = logspace(0, 2.1, 10);             % The different gamma values to test out.
 params.startingGammaIndex = floor(size(params.gammas,2) / 2);
 params.imageScale = 0.2;                % Use this for giant images to scale them down.
-params.deGamma = truek;
+params.deGamma = true;
+
+params.imageSaveFile = 'images.mat';
 
 addpath(params.imageDir);
 
