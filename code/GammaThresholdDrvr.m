@@ -12,6 +12,10 @@ error(nargchk(1, 1, nargin));
 
 % Read in the list of images.
 imagePaths = rdir(sprintf('%s/**/*.jpg', params.imageDir));
+if isempty(imagePaths)
+    display('Error: Make sure that image directory has been added to the path.\n');
+    exit();
+end
 
 % Read the contents of each image into memory now, so that we don't slow
 % down the experiment later.
@@ -19,7 +23,9 @@ if exist(params.imageSaveFile, 'file') ~= 2
     tic
     for i = 1:size(imagePaths, 1)
         image = imread(imagePaths(i).name);
-        image = imresize(image, params.imageScale);
+        if size(image, 2) > 500
+            image = imresize(image, params.imageScale);
+        end
         images{i} = flipdim(double(image), 1) ./ 255;
     end
     save(params.imageSaveFile, 'images');
@@ -170,6 +176,8 @@ try
                 % is 0, since there is no right answer for such trials.  We
                 % say correct with probability 0.5 on trials where coherence
                 % is 0.
+                display(sprintf('Response = %d, testDirection = %d', response, testDirection));
+                
                 if response == testDirection
                     textTag = 'correctText';
                 else
