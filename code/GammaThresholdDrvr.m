@@ -14,7 +14,6 @@ error(nargchk(1, 1, nargin));
 imagePaths = rdir(sprintf('%s/**/*.jpg', params.imageDir));
 if isempty(imagePaths)
     display('Error: Make sure that image directory has been added to the path.\n');
-    exit();
 end
 
 % Read the contents of each image into memory now, so that we don't slow
