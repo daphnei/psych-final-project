@@ -4,10 +4,6 @@ function GammaThresholdDrvr(params)
 % Syntax:
 % GammaThresholdDrvr(params)
 
-FAKE = 0;
-CORRECT = 1;
-INCORRECT = 2;
-
 error(nargchk(1, 1, nargin));
 
 % Read in the list of images.
@@ -41,12 +37,11 @@ end
 
 % Convenience parameters
 nImages = size(imagePaths, 1);
-nGammas = size(params.gammas, 2);
+nGammas = length(params.gammasBelow) + length(params.gammasAbove);
 nTests = nImages * nGammas;	% Number of tests in each block of the experiment. There is one test for each possible gamma/image combination.
 
 % Setup the response data.  This will store all the responses.
 responseData = zeros(nTests, params.nBlocks);
-startingColumn = 1;
 
 % Get the keyboard listener ready.
 mglGetKeyEvent;
@@ -79,12 +74,19 @@ try
     startingColumn = 1;
     
     
+    maxGammaBelowIndex = length(params.gammasBelow);
+    maxGammaAboveIndex = length(params.gammasAbove);
+    
 	% Now run the trials.
 	for i = 1:params.nBlocks
 		trialOrder = Shuffle(1:nTests);
-        trialHistory = [];
-        maxGammaIndex = length(params.gammas);
-        currentGammaIndex = params.startingGammaIndex;
+        currentGammaBelowIndex = params.startingGammaBelowIndex;
+        currentGammaAboveIndex = params.startingGammaAboveIndex;
+        
+        trialHistoryBelow = [];
+        trialHistoryAbove = [];
+
+        isAbove = rand(nTests, 1) > 0.5;
         
 		for j = 1:nTests
 			% Explicit trial index, as well as the indiices of the 
@@ -93,7 +95,6 @@ try
             imageIndex = mod(index, nImages) + 1;
             
             theImage = images{imageIndex};
-            gamma = params.gammas(currentGammaIndex);
 
             % TODO: Perform some modification on theGammaAdjustedImage to
             % actually do the gamma adjusting.
@@ -102,6 +103,12 @@ try
                 theGammaAdjustedImage = step(hGamma, theImage);
             else
                 theGammaAdjustedImage = theImage;
+            end
+            
+            if isAbove(j)
+              gamma = params.gammasAbove(currentGammaAboveIndex);
+            else
+              gamma = params.gammasBelow(currentGammaBelowIndex);  
             end
             
             theGammaAdjustedImage = theGammaAdjustedImage .^ gamma;
@@ -155,17 +162,14 @@ try
             % Redraw the screen to remove the stimulus images.
             win.draw();
 
-            if response == testDirection          
-                trialHistory = horzcat(trialHistory, CORRECT);   
-                historySize = length(trialHistory);
-               if  historySize > 1 && trialHistory(historySize) == CORRECT && trialHistory(historySize - 1) == CORRECT
-                  trialHistory = horzcat(trialHistory, FAKE);
-                  currentGammaIndex = min(currentGammaIndex + 1, maxGammaIndex);
-               end            
-            else
-                trialHistory = horzcat(trialHistory, INCORRECT);
-                currentGammaIndex = max(currentGammaIndex - 1, 1);               
+            % update the history based on which side was ran
+            isCorrectResponse = response == testDirection;
+            if isabove(j)
+                [trialHistoryAbove, currentGammaAboveIndex] = updateTrialHistory(trialHistoryAbove, currentGammaAboveIndex, maxGammaAboveIndex, isCorrectResponse);                
+            else 
+               [trialHistoryBelow, currentGammaBelowIndex] = updateTrialHistory(trialHistoryBelow, currentGammaBelowIndex, maxGammaBelowIndex, isCorrectResponse);                
             end
+            
             % The following is the code that tells the user if they are
             % right or wrong. I am not sure if we want to continue doing
             % this or not.
