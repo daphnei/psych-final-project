@@ -23,9 +23,9 @@ params.imageDir = 'test_images';         % The location of the photos
 %params.gammas = logspace(0, 1, 30) / 10 + 1; % Gamma values to darken the image.
 %params.gammas = logspace(0, 1, 30) / 10; % Gamma values to lighten the image.
 
-params.gammasBelow = logspace(0, 2.1, 20);             % The different gamma values to test out.
+params.gammasBelow = logspace(0, 1, 30) / 10 + 1;             % The different gamma values to test out.
 params.startingGammaBelowIndex = floor(size(params.gammasBelow,2) / 2);
-params.gammasAbove = logspace(3.0, 2.1, 20);
+params.gammasAbove = fliplr(logspace(0, 1, 30) / 10);
 params.startingGammaAboveIndex = floor(size(params.gammasAbove,2) / 2);
 
 params.imageScale = 0.2;                % Use this for giant images to scale them down.

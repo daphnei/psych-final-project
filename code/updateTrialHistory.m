@@ -6,11 +6,13 @@ INCORRECT = 2;
 
 if isCorrectResponse          
      updatedTrialHistory = horzcat(trialHistory, CORRECT);
-     historySize = length(trialHistoryBelow);
+     historySize = length(trialHistory);
      % two correct in a row, become harder
      if  historySize > 1 && trialHistory(historySize) == CORRECT && trialHistory(historySize - 1) == CORRECT
          updatedTrialHistory = horzcat(trialHistory, FAKE);
          updatedIndex = min(currentIndex + 1, maxIndex);
+     else
+         updatedIndex = max(currentIndex - 1, 1); 
      end
  else % one incorrect, become easier
      updatedTrialHistory = horzcat(trialHistory, INCORRECT);

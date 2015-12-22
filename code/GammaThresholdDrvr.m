@@ -9,7 +9,7 @@ error(nargchk(1, 1, nargin));
 % Read in the list of images.
 imagePaths = rdir(sprintf('%s/**/*.jpg', params.imageDir));
 if isempty(imagePaths)
-    display('Error: Make sure that image directory has been added to the path.\n');
+    error('Error: Make sure that image directory has been added to the path.\n');
 end
 
 % Read the contents of each image into memory now, so that we don't slow
@@ -25,14 +25,10 @@ if exist(params.imageSaveFile, 'file') ~= 2
     end
     save(params.imageSaveFile, 'images');
     toc
-else  
+else
     tic
     load(params.imageSaveFile);
     toc
-end
-% Make sure we have a positive number of gammas.
-if size(params.gammas, 2) <= 0
-	error('Number of gammas must be >= 0.');
 end
 
 % Convenience parameters
@@ -56,20 +52,20 @@ end
 % Eat up keyboard input.
 ListenChar(2);
 
-try	
-	% Clear out any previous keypresses.
-	FlushEvents;
-	
-	% Show the adaptation dots and wait for a keypress to start.
+try
+    % Clear out any previous keypresses.
+    FlushEvents;
+    
+    % Show the adaptation dots and wait for a keypress to start.
     win.enableObject('startText');
-	win.draw;
-	
-	% This will block until a key is pressed.
-	FlushEvents;
-	GetChar;
+    win.draw;
+    
+    % This will block until a key is pressed.
+    FlushEvents;
+    GetChar;
     win.disableObject('startText');
     
-	display('Starting the trials.');
+    display('Starting the trials.');
     
     startingColumn = 1;
     
@@ -77,25 +73,25 @@ try
     maxGammaBelowIndex = length(params.gammasBelow);
     maxGammaAboveIndex = length(params.gammasAbove);
     
-	% Now run the trials.
-	for i = 1:params.nBlocks
-		trialOrder = Shuffle(1:nTests);
+    % Now run the trials.
+    for i = 1:params.nBlocks
+        trialOrder = Shuffle(1:nTests);
         currentGammaBelowIndex = params.startingGammaBelowIndex;
         currentGammaAboveIndex = params.startingGammaAboveIndex;
         
         trialHistoryBelow = [];
         trialHistoryAbove = [];
-
+        
         isAbove = rand(nTests, 1) > 0.5;
         
-		for j = 1:nTests
-			% Explicit trial index, as well as the indiices of the 
+        for j = 1:nTests
+            % Explicit trial index, as well as the indiices of the
             % corresponding gamme and image for the trial.
-			index = trialOrder(j);
+            index = trialOrder(j);
             imageIndex = mod(index, nImages) + 1;
             
             theImage = images{imageIndex};
-
+            
             % TODO: Perform some modification on theGammaAdjustedImage to
             % actually do the gamma adjusting.
             if params.deGamma
@@ -106,9 +102,9 @@ try
             end
             
             if isAbove(j)
-              gamma = params.gammasAbove(currentGammaAboveIndex);
+                gamma = params.gammasAbove(currentGammaAboveIndex);
             else
-              gamma = params.gammasBelow(currentGammaBelowIndex);  
+                gamma = params.gammasBelow(currentGammaBelowIndex);
             end
             
             theGammaAdjustedImage = theGammaAdjustedImage .^ gamma;
@@ -116,13 +112,13 @@ try
             % Make sure none of the values in the gamma adjusted image are
             % larger than 1.
             theGammaAdjustedImage = min(theGammaAdjustedImage, 1);
-
+            
             imageWidth = size(theImage, 2);
             imageHeight = size(theImage, 1);
             spacing = (imageWidth + params.spacing) / 2;
             
-			% Set some parameters for the test patch for this trial.
-			win.BackgroundColor = params.bgRGB;
+            % Set some parameters for the test patch for this trial.
+            win.BackgroundColor = params.bgRGB;
             
             % randomly decide whether to present the gamma-adjusted on the
             % left or on the right.
@@ -135,7 +131,7 @@ try
                 theImagePosition = [-spacing, 0];
                 theGammaAdjustedImagePosition = [spacing, 0];
             end
-                        
+            
             % Create objects for the unmodified image and the
             % Gamma-adjusted image.
             tic
@@ -150,24 +146,26 @@ try
             
             win.draw();
             
-			% Show the test dots.
-			response = WaitForResponse(win, params, params.trialDuration);
-
+            % Show the test dots.
+            response = WaitForResponse(win, params, params.trialDuration);
+            
             win.disableObject('theImage');
             win.deleteObject('theImage');
-			
+            
             win.disableObject('theGammaAdjustedImage');
             win.deleteObject('theGammaAdjustedImage');
             
             % Redraw the screen to remove the stimulus images.
             win.draw();
-
+            
             % update the history based on which side was ran
             isCorrectResponse = response == testDirection;
-            if isabove(j)
-                [trialHistoryAbove, currentGammaAboveIndex] = updateTrialHistory(trialHistoryAbove, currentGammaAboveIndex, maxGammaAboveIndex, isCorrectResponse);                
-            else 
-               [trialHistoryBelow, currentGammaBelowIndex] = updateTrialHistory(trialHistoryBelow, currentGammaBelowIndex, maxGammaBelowIndex, isCorrectResponse);                
+            if isAbove(j)
+                display('CORRECT');
+                [trialHistoryAbove, currentGammaAboveIndex] = updateTrialHistory(trialHistoryAbove, currentGammaAboveIndex, maxGammaAboveIndex, isCorrectResponse);
+            else
+                display('  WRONG');
+                [trialHistoryBelow, currentGammaBelowIndex] = updateTrialHistory(trialHistoryBelow, currentGammaBelowIndex, maxGammaBelowIndex, isCorrectResponse);
             end
             
             % The following is the code that tells the user if they are
@@ -186,7 +184,7 @@ try
                 else
                     textTag = 'incorrectText';
                 end
-
+                
                 % Enable the appropriate feedback text.
                 win.enableObject(textTag);
                 win.draw();
@@ -200,7 +198,7 @@ try
                 % Turn off the feedback text.
                 win.disableObject(textTag);
             end
-        
+            
             % Store the response.
             % Store 1 if the response is -1 and the unmodified image is on the left
             % Store 1 if the response is 1 and the unmodified image is on the right
@@ -212,45 +210,45 @@ try
             end
         end
         startingColumn = startingColumn + 1;
-	end
-	
-	% Close everything down.
-	ListenChar(0);
-	win.close;
-	
-	% Figure out some data saving parameters.
-	dataFolder = sprintf('%s/data/%s/%s/%s', fileparts(fileparts(which('GammaThreshold'))), ...
-		params.experimenter, params.experimentName, params.subject);
-	if ~exist(dataFolder, 'dir')
-		mkdir(dataFolder);
-	end
-	dataFile = sprintf('%s/%s-%d.csv', dataFolder, params.experimentName, GetNextDataFileNumber(dataFolder, '.csv'));
-	
-	% Stick the data into a CSV file in the data folder..
-	c = CSVFile(dataFile, true);
-	c = c.addColumn('Image', 'g');
-	c = c.setColumnData('Image', {imagePaths.name});
+    end
+    
+    % Close everything down.
+    ListenChar(0);
+    win.close;
+    
+    % Figure out some data saving parameters.
+    dataFolder = sprintf('%s/data/%s/%s/%s', fileparts(fileparts(which('GammaThreshold'))), ...
+        params.experimenter, params.experimentName, params.subject);
+    if ~exist(dataFolder, 'dir')
+        mkdir(dataFolder);
+    end
+    dataFile = sprintf('%s/%s-%d.csv', dataFolder, params.experimentName, GetNextDataFileNumber(dataFolder, '.csv'));
+    
+    % Stick the data into a CSV file in the data folder..
+    c = CSVFile(dataFile, true);
+    c = c.addColumn('Image', 'g');
+    c = c.setColumnData('Image', {imagePaths.name});
     
     c = c.addColumn('Gamma', 'g');
-	c = c.setColumnData('Gamma', params.gammas');
+    c = c.setColumnData('Gamma', params.gammas');
     
     i = 1;
-	while i < params.nBlocks;
-		cName = sprintf('Choice %d', i);
-		c = c.addColumn(cName, 'd');
-		c = c.setColumnData(cName, responseData(:,i));
+    while i < params.nBlocks;
+        cName = sprintf('Choice %d', i);
+        c = c.addColumn(cName, 'd');
+        c = c.setColumnData(cName, responseData(:,i));
         
         i = i + 2;
-	end
-	c.write;
-	
+    end
+    c.write;
+    
 catch e
-	ListenChar(0);
-	win.close;
-	
-	if strcmp(e.message, 'abort')
-		fprintf('- Experiment aborted, nothing saved.\n');
-	else
-		rethrow(e);
-	end
+    ListenChar(0);
+    win.close;
+    
+    if strcmp(e.message, 'abort')
+        fprintf('- Experiment aborted, nothing saved.\n');
+    else
+        rethrow(e);
+    end
 end
