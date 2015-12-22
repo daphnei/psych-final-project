@@ -23,13 +23,13 @@ params.imageDir = 'test_images';         % The location of the photos
 %params.gammas = logspace(0, 1, 30) / 10 + 1; % Gamma values to darken the image.
 %params.gammas = logspace(0, 1, 30) / 10; % Gamma values to lighten the image.
 
-params.gammasBelow = logspace(0, 1, 30) / 10 + 1;             % The different gamma values to test out.
-params.startingGammaBelowIndex = floor(size(params.gammasBelow,2) / 2);
-params.gammasAbove = fliplr(logspace(0, 1, 30) / 10);
-params.startingGammaAboveIndex = floor(size(params.gammasAbove,2) / 2);
+params.gammasBelow = log(linspace(exp(1),exp(2.199),20));             % The different gamma values to test out.
+params.startingGammaBelowIndex = 1; %floor(size(params.gammasBelow,2) / 2);
+params.gammasAbove = fliplr(log(linspace(exp(2.201),exp(3.4),20)));
+params.startingGammaAboveIndex = 1; %floor(size(params.gammasAbove,2) / 1);
 
 params.imageScale = 0.2;                % Use this for giant images to scale them down.
-params.deGamma = false;
+params.deGamma = true;
 
 params.imageSaveFile = 'images.mat';
 
@@ -39,7 +39,7 @@ params.spacing = 100;                    % How much spacing to put between the t
 params.bgRGB = [0,0,0];                 % The background color.
 
 % Experimental parameters.
-params.nBlocks = 1;                    % Number of blocks
+params.nTrials = 300;                   % This is the total number of trials to be shown. The trials shown are chosen randomly from the possible trials that could be shown.
 params.trialDuration = 0.5;				% Trial duration (seconds)
 params.initialAdaptTime = 1;			% Time for initial adaptation (seconds)
 params.topupAdaptTime = 0.3;			% Top-up adapt time. (seconds)

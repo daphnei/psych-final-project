@@ -12,7 +12,8 @@ if isCorrectResponse
          updatedTrialHistory = horzcat(trialHistory, FAKE);
          updatedIndex = min(currentIndex + 1, maxIndex);
      else
-         updatedIndex = max(currentIndex - 1, 1); 
+         % one correct in a row, keep the same index
+         updatedIndex = currentIndex;
      end
  else % one incorrect, become easier
      updatedTrialHistory = horzcat(trialHistory, INCORRECT);
