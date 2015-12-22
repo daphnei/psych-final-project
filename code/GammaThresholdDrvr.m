@@ -104,8 +104,8 @@ try
                 theGammaAdjustedImage = theImage;
             end
             
-            hGamma = vision.GammaCorrector(gamma, 'Correction', 'Gamma');
-            theGammaAdjustedImage = step(hGamma, theGammaAdjustedImage);
+            theGammaAdjustedImage = theGammaAdjustedImage .^ gamma;
+            
             % Make sure none of the values in the gamma adjusted image are
             % larger than 1.
             theGammaAdjustedImage = min(theGammaAdjustedImage, 1);
@@ -187,9 +187,11 @@ try
                 win.enableObject(textTag);
                 win.draw();
                 
-                % Wait for the user to press a button indicating they are
-                % ready to keep going.
-                WaitForResponse(win, params, params.trialDuration);
+                % Could wait for the user to press a button to indicate
+                % thet are readt to move on, but instead we will just put
+                % it on a timer.
+                %WaitForResponse(win, params, params.trialDuration);
+                pause(params.trialDuration);
                 
                 % Turn off the feedback text.
                 win.disableObject(textTag);

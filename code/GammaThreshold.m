@@ -20,10 +20,11 @@ function GammaThreshold(subjectName)
 
 % Test parameteters.  These determine the properties of the test stimuli.
 params.imageDir = 'test_images';         % The location of the photos
-params.gammas = logspace(0, 2.1, 20);             % The different gamma values to test out.
+%params.gammas = logspace(0, 1, 30) / 10 + 1; % Gamma values to darken the image.
+params.gammas = logspace(0, 1, 30) / 10; % Gamma values to lighten the image.
 params.startingGammaIndex = floor(size(params.gammas,2) / 2);
 params.imageScale = 0.2;                % Use this for giant images to scale them down.
-params.deGamma = true;
+params.deGamma = false;
 
 params.imageSaveFile = 'images.mat';
 
@@ -34,7 +35,7 @@ params.bgRGB = [0,0,0];                 % The background color.
 
 % Experimental parameters.
 params.nBlocks = 1;                    % Number of blocks
-params.trialDuration = 1.0;				% Trial duration (seconds)
+params.trialDuration = 0.5;				% Trial duration (seconds)
 params.initialAdaptTime = 1;			% Time for initial adaptation (seconds)
 params.topupAdaptTime = 0.3;			% Top-up adapt time. (seconds)
 params.enableFeedback = 1;				% Enable/disable trial feedback
