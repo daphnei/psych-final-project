@@ -30,7 +30,7 @@ function [] = process_data()
     h2 = plot(fitresult_2, gamma_difs_2, lower_fractions_2, 'go');
     
     plot([0.4 1.2], [0.75, 0.75], ':k');
-    axis([0.4 1.2 0.3 1]);
+    %axis([0.4 1.2 0.3 1]);
     
     legend([h1(1), h2(1), h2(2)], ...
         'Subject 1 data', 'Subject 2 data', 'Fitted curves', ...
@@ -49,14 +49,36 @@ function value = get_threshold(fitresult, threshold_level)
     value = intersections(x, y1, x, y2);
 end
 
-function [fitresult, gof, gamma_differences, fractions_correct] = fit_psychometric_on_lower(gamma_values, fractions_correct) 
-    acceptable_indices = find(gamma_values < 2.2);
+function [fitresult, gof, gamma_differences, fractions_correct] = ...
+        fit_psychometric_on_lower(gamma_values, fractions_correct) 
+    [fitresult, gof, gamma_differences, fractions_correct] = ...
+        fit_psychometric(gamma_values, fractions_correct, false);
+end
+
+function [fitresult, gof, gamma_differences, fractions_correct] = ...
+        fit_psychometric_on_upper(gamma_values, fractions_correct) 
+    [fitresult, gof, gamma_differences, fractions_correct] = ...
+        fit_psychometric(gamma_values, fractions_correct, true);
+end
+
+function [fitresult, gof, gamma_differences, fractions_correct] = ...
+        fit_psychometric(gamma_values, fractions_correct, is_upper) 
+    if (is_upper)
+        acceptable_indices = find(gamma_values > 2.2);
+    else
+        acceptable_indices = find(gamma_values < 2.2);
+    end
+    
     gamma_values = gamma_values(acceptable_indices);
     fractions_correct = fractions_correct(acceptable_indices);
     
     % Instead of having gamma values where a smaller value means easier
     % threshold, represent the values as difference from 2.2.
-    gamma_differences = 2.2 - gamma_values;
+    if (is_upper)
+        gamma_differences = gamma_values - 2.2;
+    else
+        gamma_differences = 2.2 - gamma_values;
+    end
     
     % I am using the instructions found on 
     % http://davehunter.wp.st-andrews.ac.uk/2015/04/12/fitting-a-psychometric-function/+
