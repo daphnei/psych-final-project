@@ -12,33 +12,69 @@ function [] = process_data()
     ylabel('Fraction of trials identified correctly');
     legend('Marissa', 'Daphne');
     
-    [fitresult_1, gof_1, gamma_difs_1, lower_fractions_1] = ...
+    [fitresult_1, gof_1, gamma_difs_1, fractions_1] = ...
         fit_psychometric_on_lower(gammas_1, fractions_correct_1);
-    [fitresult_2, gof_2, gamma_difs_2, lower_fractions_2] = ...
+    [fitresult_2, gof_2, gamma_difs_2, fractions_2] = ...
         fit_psychometric_on_lower(gammas_2, fractions_correct_2);
- 
+    [fitresult_3, gof_3, gamma_difs_3, fractions_3] = ...
+        fit_psychometric_on_upper(gammas_1, fractions_correct_1);
+    [fitresult_4, gof_4, gamma_difs_4, fractions_4] = ...
+        fit_psychometric_on_upper(gammas_2, fractions_correct_2);
+    
     % Print out the thresholds.
     threshold_1 = get_threshold(fitresult_1, 0.75);
     threshold_2 = get_threshold(fitresult_2, 0.75);
-    display(sprintf('Threshold 1 is %f', threshold_1));
-    display(sprintf('Threshold 2 is %f', threshold_2));
+    threshold_3 = get_threshold(fitresult_3, 0.75);
+    threshold_4 = get_threshold(fitresult_4, 0.75);
+    display(sprintf('Lower Threshold Person 1 is %f', threshold_1));
+    display(sprintf('Lower Threshold Person 2 is %f', threshold_2));
+    display(sprintf('Upper Threshold Person 1 is %f', threshold_3));
+    display(sprintf('Upper Threshold Person 2 is %f', threshold_4));
     
     figure();
-    hold on;
     
-    h1 = plot(fitresult_1, gamma_difs_1, lower_fractions_1, 'bo');
-    h2 = plot(fitresult_2, gamma_difs_2, lower_fractions_2, 'go');
+    subplot(2, 2, 1);
+    h1 = plot(fitresult_1, gamma_difs_1, fractions_1, 'bo');
+    title('Lowered Gamma - Subject 1');
+    b = gca; legend(b,'off');
+    axis([0.4 1.2 0.3 1.01]);
+    xlabel('Gamma modification (amount below 2.2)');
+    ylabel('Fraction correct');
     
-    plot([0.4 1.2], [0.75, 0.75], ':k');
-    %axis([0.4 1.2 0.3 1]);
+    subplot(2, 2, 2);
+    h2 = plot(fitresult_2, gamma_difs_2, fractions_2, 'bo');
+    title('Lowered Gamma - Subject 2');
+    b = gca; legend(b,'off');
+    axis([0.4 1.2 0.3 1.01]);
+    xlabel('Gamma modification (amount below 2.2)');
+    ylabel('Fraction correct');
     
-    legend([h1(1), h2(1), h2(2)], ...
-        'Subject 1 data', 'Subject 2 data', 'Fitted curves', ...
-        'Location', 'southwest'); 
+    subplot(2, 2, 3);
+    h3 = plot(fitresult_3, gamma_difs_3, fractions_3, 'bo');
+    title('Raised Gamma - Subject 1');
+    b = gca; legend(b,'off');
+    axis([0.73 1.2 0.3 1.01]);
+    xlabel('Gamma modification (amount above 2.2)');
+    ylabel('Fraction correct');
     
-    title('Threshold for Discerning Unmodified Image from Image with Lowered Gamma');
-    xlabel('Gamma correction (amount below 2.2)');
-    ylabel('Fraction of trials identified correctly');
+    subplot(2, 2, 4);
+    h4 = plot(fitresult_4, gamma_difs_4, fractions_4, 'bo');
+    title('Raised Gamma - Subject 2');
+    b = gca; legend(b,'off');
+    axis([0.73 1.2 0.3 1.01]);
+    xlabel('Gamma modification (amount above 2.2)');
+    ylabel('Fraction correct');
+    
+%     plot([0.4 1.2], [0.75, 0.75], ':k');
+%     %axis([0.4 1.2 0.3 1]);
+%     
+%     legend([h1(1), h2(1), h2(2)], ...
+%         'Subject 1 data', 'Subject 2 data', 'Fitted curves', ...
+%         'Location', 'southwest'); 
+%     
+%     title('Threshold for Discerning Unmodified Image from Image with Lowered Gamma');
+%     xlabel('Gamma correction (amount below 2.2)');
+%     ylabel('Fraction of trials identified correctly');
 end
 
 function value = get_threshold(fitresult, threshold_level)
